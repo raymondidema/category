@@ -42,7 +42,7 @@ Category requires the following columns: id, parent_id, position
 
      <?php
 
-     use \Raymondidema\Category\Model\Category as Codequent;
+     use \Raymondidema\Category\Models\Category as Codequent;
 
      class Category extends Codequent
      {
