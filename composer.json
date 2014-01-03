@@ -1,0 +1,26 @@
+{
+    "name": "raymondidema/category",
+    "description": "Category table (POSTGRESQL ONLY)",
+    "keywords": ["laravel","postgresql"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Raymond Idema",
+            "email": "raymond@design-code.nl"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "illuminate/support": "4.1.*",
+        "illuminate/database": "4.1.*"
+    },
+    "autoload": {
+        "classmap": [
+            "src/migrations"
+        ],
+        "psr-0": {
+            "Raymondidema\\Category\\": "src/"
+        }
+    },
+    "minimum-stability": "dev"
+}
