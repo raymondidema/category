@@ -38,4 +38,14 @@ Category requires the following columns: id, parent_id, position
      		$table->softDeletes();
      	});
 
+### How to interact with the model
+
+     <?php
+
+     use \Raymondidema\Category\Model\Category as Codequent;
+
+     class Category extends Codequent
+     {
+     	// do stuff here!!!
+     }
 
