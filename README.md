@@ -2,6 +2,18 @@
 
 Category Table (Recursive) (PostgreSQL only)
 
+## Installation
+
+     composer.json
+
+     "require": {
+		"laravel/framework": "4.1.*",
+		"raymondidema/category": "dev-master"
+	},
+
+
+After updating you could do ``composer update`` or ``composer install``
+or alternatively ``composer require raymondidema/category``
 
 ## Config
 
