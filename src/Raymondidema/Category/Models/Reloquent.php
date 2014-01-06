@@ -5,11 +5,13 @@ use Illuminate\Database\Eloquent\Collection;
 use \Illuminate\Support\Facades\DB;
 use \Illuminate\Database\Eloquent\Builder;
 
-class Category extends Eloquent
+class Reloquent extends Eloquent
 {
-	protected $fillable = ['id', 'parent_id', 'name', 'slug'];
+	// protected $fillable = ['id', 'parent_id', 'name', 'slug'];
 
-	protected $table = 'categories';
+	// protected $table = 'categories';
+
+	// protected $query;
 
 	public function children($id, $depth = 1, $attributes = ['*'])
 	{
@@ -17,7 +19,7 @@ class Category extends Eloquent
 		$select = implode(',',$attributes);
 		$depth = $depth+1;
 
-		$query = DB::select('
+		$this->query = DB::select('
 			WITH    RECURSIVE
 			q AS
 			(
@@ -36,7 +38,13 @@ class Category extends Eloquent
 			WHERE NOT id = ?
 			ORDER BY
 			position DESC, level',[$id,$depth,$id]);
-		return new Collection($query);
+		return $this;
+		
+	}
+
+	public function show()
+	{
+		return $this->newCollection($this->query);
 	}
 
 	public function decendants($id, $depth = 1, $attributes = ['*'])
