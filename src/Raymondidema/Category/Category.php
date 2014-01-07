@@ -321,7 +321,9 @@ class Category
 
 			$query .= ' SELECT '.$attributes.' FROM q ';
 
-			$query .= $data->query_extended;
+			$query .= (count($this->where)) ? ' WHERE ' : '';
+
+			$query .= implode(' AND ', $this->where);
 
 			$query .= $data->order;
 
