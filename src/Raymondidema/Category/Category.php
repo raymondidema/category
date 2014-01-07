@@ -47,7 +47,7 @@ class Category
 	 * Order by
 	 * @var string
 	 */
-	protected $order = ' ORDER BY level';
+	protected $order = ' ORDER BY real_position, "real_depth", level';
 
 	/**
 	 * Extra parameters
@@ -129,11 +129,11 @@ class Category
 		WITH    RECURSIVE
 		q AS
 		(
-			SELECT  *, ARRAY[id] AS level
+			SELECT  *, ARRAY[id] AS level, 1 AS real_depth, ARRAY[position] AS real_position
 			FROM    '.$this->table.' hc
 			WHERE   id = ?
 			UNION ALL
-			SELECT  hc.*, q.level || hc.id
+			SELECT  hc.*, q.level || hc.id, "real_depth" + 1, q.real_position || hc.position
 			FROM    q
 			JOIN    '.$this->table.' hc
 			ON      hc.parent_id = q.id
