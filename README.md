@@ -33,9 +33,11 @@ or alternatively ``composer require raymondidema/category``
 #### Optional components
 
 Required
+
 table($table), children($id), childrenWithRoot($id), decendants($id), decendantsWithRoot($id), ancestors($id), breadcrumb($id), get(array('*'))
 
 Optional
+
 depth($integer), where($column, $option), orderBy($column, $ascOrDesc), remember($minutes = null)
 
 ### Descendants
