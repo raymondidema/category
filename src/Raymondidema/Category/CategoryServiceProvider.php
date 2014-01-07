@@ -1,7 +1,6 @@
 <?php namespace Raymondidema\Category;
 
 use Illuminate\Support\ServiceProvider;
-use Raymondidema\Category\Models\Category as Cat;
 
 class CategoryServiceProvider extends ServiceProvider {
 
@@ -31,7 +30,7 @@ class CategoryServiceProvider extends ServiceProvider {
 	{
 		$this->app['category'] = $this->app->share(function($app)
 		{
-			return new Category(new Cat);
+			return new Category();
 		});
 	}
 

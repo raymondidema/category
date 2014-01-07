@@ -37,28 +37,69 @@ class Category
 
 	protected $query_extended;
 
+	/**
+	 * Id
+	 * @var int
+	 */
 	protected $id;
 
+	/**
+	 * Order by
+	 * @var string
+	 */
 	protected $order = ' ORDER BY level';
 
+	/**
+	 * Extra parameters
+	 * @var array
+	 */
 	protected $parameters = array();
 
+	/**
+	 * cachename
+	 * @var string md5
+	 */
 	protected $cacheName;
 
+	/**
+	 * Collection
+	 * @var object
+	 */
 	protected $collection;
 
+	/**
+	 * where method
+	 * @var array
+	 */
+	protected $where = array();
+
+	/**
+	 * Table selector
+	 * @param  string $table Sets the tablename
+	 * @return object        returns the object
+	 */
 	public function table($table)
 	{
 		$this->table = $table;
 		return $this;
 	}
 
+	/**
+	 * Gets the children
+	 * @param  int    $id ID root
+	 * @return object     Returns the object
+	 */
 	public function children($id)
 	{
 		$this->decendants($id);
 		return $this;
 	}
 
+	/**
+	 * Children with root
+	 * @param  int    $id ID root
+	 * @return object     Returns the object
+	 */
 	public function childrenWithRoot($id)
 	{
 		$this->root = true;
@@ -66,6 +107,11 @@ class Category
 		return $this;
 	}
 
+	/**
+	 * Decendants
+	 * @param  int $id ID of the root
+	 * @return mixed
+	 */
 	public function decendants($id)
 	{
 		$this->id = $id;
@@ -100,7 +146,7 @@ class Category
 		
 		if($this->root == false)
 		{
-			$this->query_extended .= ' WHERE NOT id = ?';
+			$this->where[] = ' NOT id = ?';
 			$this->parameters = array($id,$depth,$id);
 		}
 		else
@@ -111,6 +157,11 @@ class Category
 		return $this;
 	}
 
+	/**
+	 * Ancestors
+	 * @param  int $id    Current position ID
+	 * @return object     collection
+	 */
 	public function ancestors($id)
 	{
 		$this->id = $id;
@@ -132,6 +183,11 @@ class Category
 		return $this;
 	}
 
+	/**
+	 * Same as Ancestors
+	 * @param  int $id    Current position ID
+	 * @return object     Collection
+	 */
 	public function breadcrumb($id)
 	{
 		$this->ancestors($id);
@@ -145,6 +201,11 @@ class Category
 		return $this;
 	}
 
+	/**
+	 * Gets the complete Tree
+	 * @param  int    $id ID as root
+	 * @return object     Collection
+	 */
 	public function tree($id)
 	{
 		$this->depth = 0;
@@ -160,12 +221,22 @@ class Category
 		return $this->get();
 	}
 
+	/**
+	 * Get function almost the same as Eloquent
+	 * @param  array  $attributes Array for selecting partials (id, name, slug)
+	 * @return object             Returns a collection
+	 */
 	public function get($attributes = array('*'))
 	{
 		$this->compileQuery($attributes);
 		return $this->collection;
 	}
 
+	/**
+	 * Build the query and compile
+	 * @param  mixed $attributes  Array for selecting partials
+	 * @return object             Collection
+	 */
 	public function compileQuery($attributes)
 	{
 		$query = $this->query;
@@ -176,18 +247,31 @@ class Category
 
 		$query .= ' SELECT '.$attributes.' FROM q ';
 
-		$query .= $this->query_extended;
+		$query .= (count($this->where)) ? ' WHERE ' : '';
+
+		$query .= implode(' AND ', $this->where);
 
 		$query .= $this->order;
 
 		$this->collection = DB::select($query,$this->parameters);
 	}
 
+	/**
+	 * Set the order
+	 * @param string $order Order by
+	 */
 	public function setOrder($order)
 	{
 		$this->order = $order;
+		$this->cacheName = $this->cacheName.'_orderby_'.$order;
 	}
 
+	/**
+	 * Order by element
+	 * @param  string $name  Order on the name
+	 * @param  string $order ASC or DESC by default DESC
+	 * @return object        returns the object
+	 */
 	public function orderBy($name, $order = 'DESC')
 	{
 		$orderBy = ' ORDER BY '. $name. ' ' .$order. ' ';
@@ -195,22 +279,38 @@ class Category
 		return $this;
 	}
 
+	/**
+	 * Depth of the children
+	 * @param  int    $depth Depth of the children
+	 * @return object        returns the object
+	 */
 	public function depth($depth)
 	{
 		$this->setDepth($depth);
 		return $this;
 	}
 
+	/**
+	 * Setting the depth
+	 * @param int $depth Setting the depth
+	 */
 	public function setDepth($depth)
 	{
 		$this->depth = $depth;
+		$this->cacheName = $this->cacheName.'_depth_'.$depth;
 	}
 
+	/**
+	 * Cache function
+	 * @param  integer $minutes    Time in minutes
+	 * @param  array   $attributes Attributes (id, name, slug)
+	 * @return object              Returns the object
+	 */
 	public function remember($minutes = 10, $attributes = array('*'))
 	{
 		$data = $this;
 		
-		$cached = Cache::remember($this->table.'_recurcive_'.$this->cacheName, $minutes, function() use ($data, $attributes)
+		$cached = Cache::remember(md5($this->table.'_recurcive_'.$this->cacheName), $minutes, function() use ($data, $attributes)
 		{
 			// do something here!!!
 			$query = $data->query;
@@ -229,5 +329,23 @@ class Category
 		});
 
 		return $cached;
+	}
+
+	/**
+	 * Where like eloquent
+	 * @param  string $name [description]
+	 * @param  mixed  $item [description]
+	 * @return object       Returns the object
+	 */
+	public function where($name, $item)
+	{
+		$query = " ". $name . " = '" . $item . "' ";
+		$this->where[] = $query;
+		return $this;
+	}
+
+	public function hasChildren($id)
+	{
+
 	}
 }
