@@ -20,20 +20,27 @@ or alternatively ``composer require raymondidema/category``
      ./app/config/app.php
      
      'providers' => array( 'Raymondidema\Category\CategoryServiceProvider' );
-     'aliases' => array( 'Categories' => 'Raymondidema\Category\Facades\Category' );
+     'aliases' => array( 'Menustructure' => 'Raymondidema\Category\Facades\Category' );
 
 
 ### Children
 
-     Categories::children($id, $depth = 1, $attributes = array('*'));
+     Menustructure::table('categories')
+                    ->children($id)
+                    ->depth(3)
+                    ->get();
      
 ### Descendants
 
-     Categories::decendants($id, $depth = 1,  $attributes = array('*'));
+     Menustructure::table('categories')
+                    ->decendants($id)
+                    ->depth(2)
+                    ->where('name', 'aspire')
+                    ->get();
      
 ### Ancestors
 
-     Categories::ancestors($id, $attributes = array('*'));
+     Menustructure::table('categories')->ancestors($id)->get(array('name','slug'));
 
 ### Database layout example
 
@@ -50,7 +57,9 @@ Category requires the following columns: id, parent_id, position
      		$table->softDeletes();
      	});
 
-### How to interact with the model
+### How to interact with a model
+
+this is not required.
 
      <?php
 
