@@ -40,7 +40,7 @@ or alternatively ``composer require raymondidema/category``
      
 ### Ancestors
 
-     Categories::table('categories')->ancestors($id)->get(array('name','slug'));
+     Menustructure::table('categories')->ancestors($id)->get(array('name','slug'));
 
 ### Database layout example
 
