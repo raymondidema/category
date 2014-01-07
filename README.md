@@ -63,9 +63,9 @@ this is not required.
 
      <?php
 
-     use \Raymondidema\Category\Models\Category as Codequent;
+     use \Raymondidema\Category\Models\Reloquent;
 
-     class Category extends Codequent
+     class Category extends Reloquent
      {
      	// do stuff here!!!
      }
